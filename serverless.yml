@@ -1,0 +1,14 @@
+service: nurimba-cloudformation
+frameworkVersion: ^2.64.1
+configValidationMode: error
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  region: us-east-1
+  deploymentBucket:
+    name: nurimba-serverless
+
+resources:
+  - ${file(./route53.yml)}
+  - ${file(./acm.yml)}

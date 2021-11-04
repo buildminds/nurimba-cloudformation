@@ -1,0 +1,14 @@
+Resources:
+  NurimbaPublicRoute:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: nurimba.com
+      HostedZoneConfig:
+        Comment: Nurimba Public Hosted Zone
+
+Outputs:
+  NurimbaPublicRouteId:
+    Description: Nurimba Public Hosted Zone ID
+    Export:
+      Name: nurimba-public-route-id
+    Value: !Ref NurimbaPublicRoute

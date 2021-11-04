@@ -1,0 +1,18 @@
+Resources:
+  NurimbaAcm:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: nurimba.com
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: nurimba.com
+          HostedZoneId: !Ref NurimbaPublicRoute
+      SubjectAlternativeNames:
+        - "*.nurimba.com"
+
+Outputs:
+  NurimbaAcmArn:
+    Description: ARN from certificate *.nurimba.com
+    Export:
+      Name: !Sub nurimba-acm-arn
+    Value: !Ref NurimbaAcm
