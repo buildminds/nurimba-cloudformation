@@ -5,6 +5,9 @@
   "repository": "https://github.com/buildminds/nurimba-cloudformation.git",
   "author": "Nurimba <desenvolvimento@nurimba.com>",
   "license": "MIT",
+  "scripts": {
+    "deploy": "serverless deploy --stage production"
+  },
   "dependencies": {
     "serverless": "^2.64.1"
   }
