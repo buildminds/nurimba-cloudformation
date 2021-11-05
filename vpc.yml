@@ -1,0 +1,161 @@
+Resources:
+  VpcNurimba:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 173.39.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+
+  VpcNurimbaInternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VpcNurimbaInternetGatewayAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VpcNurimba
+      InternetGatewayId: !Ref VpcNurimbaInternetGateway
+
+  VpcNurimbaRoute:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcNurimba
+
+  VpcNurimbaEndpointS3:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      RouteTableIds:
+        - !Ref VpcNurimbaRoute
+      ServiceName: com.amazonaws.${self:provider.region}.s3
+      VpcEndpointType: Gateway
+      VpcId: !Ref VpcNurimba
+
+  VpcNurimbaInternetGatewayRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref VpcNurimbaInternetGateway
+      RouteTableId: !Ref VpcNurimbaRoute
+
+  VpcNurimbaSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcNurimba
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: ${self:provider.region}
+      CidrBlock: !Select
+        - 0
+        - Fn::Cidr:
+            - 173.39.0.0/16
+            - 1
+            - 14
+
+  VpcNurimbaSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcNurimba
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: ${self:provider.region}
+      CidrBlock: !Select
+        - 1
+        - Fn::Cidr:
+            - 173.39.0.0/16
+            - 2
+            - 14
+
+  VpcNurimbaSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcNurimba
+      AvailabilityZone: !Select
+        - 2
+        - Fn::GetAZs: ${self:provider.region}
+      CidrBlock: !Select
+        - 2
+        - Fn::Cidr:
+            - 173.39.0.0/16
+            - 3
+            - 14
+
+  VpcNurimbaSubnet4:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcNurimba
+      AvailabilityZone: !Select
+        - 3
+        - Fn::GetAZs: ${self:provider.region}
+      CidrBlock: !Select
+        - 3
+        - Fn::Cidr:
+            - 173.39.0.0/16
+            - 4
+            - 14
+
+  VpcNurimbaSubnetAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcNurimbaRoute
+      SubnetId: !Ref VpcNurimbaSubnet1
+
+  VpcNurimbaSubnetAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcNurimbaRoute
+      SubnetId: !Ref VpcNurimbaSubnet2
+
+  VpcNurimbaSubnetAssociation3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcNurimbaRoute
+      SubnetId: !Ref VpcNurimbaSubnet3
+
+  VpcNurimbaSubnetAssociation4:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcNurimbaRoute
+      SubnetId: !Ref VpcNurimbaSubnet4
+
+  VpcNurimbaOutgoingOnly:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcNurimba
+      GroupDescription: Do not allow incoming connections
+
+Outputs:
+  VpcNurimba:
+    Description: Backend VPC
+    Export:
+      Name: nurimba-vpc-backend
+    Value: !Ref VpcNurimba
+
+  VpcNurimbaSubnet1:
+    Description: Backend Subnet 1
+    Export:
+      Name: nurimba-vpc-subnet1
+    Value: !Ref VpcNurimbaSubnet1
+
+  VpcNurimbaSubnet2:
+    Description: Backend Subnet 2
+    Export:
+      Name: nurimba-vpc-subnet2
+    Value: !Ref VpcNurimbaSubnet2
+
+  VpcNurimbaSubnet3:
+    Description: Backend Subnet 3
+    Export:
+      Name: nurimba-vpc-subnet3
+    Value: !Ref VpcNurimbaSubnet3
+
+  VpcNurimbaSubnet4:
+    Description: Backend Subnet 4
+    Export:
+      Name: nurimba-vpc-subnet4
+    Value: !Ref VpcNurimbaSubnet4
+
+  VpcNurimbaOutgoingOnly:
+    Description: Backend Security Group
+    Export:
+      Name: nurimba-vpc-sg-outgoing-only
+    Value: !Ref VpcNurimbaOutgoingOnly

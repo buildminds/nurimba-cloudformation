@@ -11,4 +11,7 @@ provider:
 
 resources:
   - ${file(./route53.yml)}
+  - ${file(./iam.yml)}
   - ${file(./acm.yml)}
+  - ${file(./vpc.yml)}
+  - ${file(./bastion.yml)}

@@ -1,0 +1,41 @@
+Resources:
+  BastionEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !GetAtt VpcNurimbaSubnet1.AvailabilityZone
+      DisableApiTermination: false
+      IamInstanceProfile: !Ref BastionProfile
+      ImageId: ami-0d5eff06f840b45e9
+      InstanceInitiatedShutdownBehavior: stop
+      InstanceType: "t3a.micro"
+      Monitoring: false
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeleteOnTermination: true
+          DeviceIndex: '0'
+          SubnetId: !Ref VpcNurimbaSubnet1
+          GroupSet:
+            - !Ref SecurityGroupSSH
+      UserData:
+        Fn::Base64: !Sub
+          - |
+            #!/bin/sh -xeuf
+            sudo yum update -y
+            echo "${SSHPUB}" >> ~/.ssh/authorized_keys
+          - SSHPUB: "${env:SSH_PUBLIC_KEY, ''}"
+
+  SecurityGroupSSH:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcNurimba
+      GroupDescription: SSH Security Group
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          ToPort: -1
+          FromPort: -1
+          IpProtocol: -1

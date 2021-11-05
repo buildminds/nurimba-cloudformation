@@ -6,9 +6,24 @@ Resources:
       HostedZoneConfig:
         Comment: Nurimba Public Hosted Zone
 
+  NurimbaPrivateRoute:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: vpc.nurimba.com
+      HostedZoneConfig:
+        Comment: Nurimba Private Hosted Zone
+      VPCs:
+        - VPCId: !Ref VpcNurimba
+          VPCRegion: ${self:provider.region}
+
 Outputs:
   NurimbaPublicRouteId:
     Description: Nurimba Public Hosted Zone ID
     Export:
       Name: nurimba-public-route-id
     Value: !Ref NurimbaPublicRoute
+  NurimbaPrivateRouteId:
+    Description: Nurimba Private Hosted Zone ID
+    Export:
+      Name: nurimba-private-route-id
+    Value: !Ref NurimbaPrivateRoute
